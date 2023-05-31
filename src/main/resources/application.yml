@@ -1,0 +1,22 @@
+spring:
+    jpa:
+        generate-ddl: false
+        show-sql: true
+        database: mysql
+        hibernate:
+            ddl-auto: update   # DB ???? ??? ?? ??? ???? ?? ??? ?? [ ???? ?? ?? CREATE ]
+
+        properties:
+            hibernate:
+                format_sql: true   # ???? ??? ??? ???
+
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver   # MySQL ? ???? ?? ???? ??
+        url: jdbc:mysql://localhost:3306/tableup?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+        username: tableup
+        password: tableup
+    mvc:
+        pathmatch:
+            matching-strategy: ant_path_matcher
+
+
