@@ -27,4 +27,6 @@ public class Restaurant {    // 매장정보
     private String restaurantLocation;     // 매장위치
 
     private String restaurantDescription;    // 매장설명
+
+    private Double star;  // 매장평점
 }

@@ -21,7 +21,7 @@ public class ApiManagerController {
 
     // 파트너쉽 가입 (회원 중복 체크)
     @PostMapping("/manager/partnership/new")
-    public ResponseEntity<?> SignUp(@RequestBody @Valid PartnershipInput partnershipInput, Errors errors) {
+    public ResponseEntity<?> SignUpPartnership(@RequestBody @Valid PartnershipInput partnershipInput, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -86,7 +86,7 @@ public class ApiManagerController {
 
         // 수정 권한 확인
         boolean authorization =
-        managerService.CheckAuthorization(
+        managerService.checkAuthorization(
                 id, updateRestaurantInput.getPartnershipEmail(), updateRestaurantInput.getPartnershipPassword()
         );
 
@@ -95,7 +95,7 @@ public class ApiManagerController {
         }
 
         // 매장정보 수정 진행
-        managerService.UpdateRestaurant(updateRestaurantInput, id);
+        managerService.updateRestaurant(updateRestaurantInput, id);
 
         return new ResponseEntity<>("매장정보 수정을 완료했습니다.", HttpStatus.OK);
     }
@@ -111,7 +111,7 @@ public class ApiManagerController {
 
         // 삭제권한 확인
         boolean authorization =
-                managerService.CheckAuthorization(
+                managerService.checkAuthorization(
                         id, deleteRestaurantInput.getPartnershipEmail(), deleteRestaurantInput.getPartnershipPassword()
                 );
 
@@ -120,7 +120,7 @@ public class ApiManagerController {
         }
 
         // 매장정보 삭제 진행
-        managerService.DeleteRestaurant(id);
+        managerService.deleteRestaurant(id);
 
         return new ResponseEntity<>("매장정보를 삭제하였습니다.", HttpStatus.OK);
     }

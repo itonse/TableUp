@@ -13,10 +13,7 @@ public interface ManagerService {
     Boolean getIsRegisteredRestaurant(AddRestaurantInput addRestaurantInput);
     void addPartnership(PartnershipInput partnershipInput);
     void addRestaurant(AddRestaurantInput addRestaurantInput, Partnership partnership);
-
-    boolean CheckAuthorization(Long id, String partnershipEmail, String partnershipPassword);
-
-    void UpdateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id);
-
-    void DeleteRestaurant(Long id);
+    boolean checkAuthorization(Long id, String partnershipEmail, String partnershipPassword);
+    void updateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id);
+    void deleteRestaurant(Long id);
 }

@@ -68,10 +68,14 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public boolean CheckAuthorization(Long id, String partnershipEmail, String partnershipPassword) {
+    public boolean checkAuthorization(Long id, String partnershipEmail, String partnershipPassword) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
         Optional<Partnership> optionalPartnership =
                 partnershipRepository.findPartnershipByEmailAndPassword(partnershipEmail, partnershipPassword);
+
+        if (!optionalRestaurant.isPresent() || !optionalPartnership.isPresent()) {
+            return false;
+        }
 
         String restaurantPartnerEmail = optionalRestaurant.get().getPartnership().getEmail();
         String partnerEmail = optionalPartnership.get().getEmail();
@@ -84,7 +88,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void UpdateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id) {
+    public void updateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         Restaurant restaurant = optionalRestaurant.get();
@@ -105,7 +109,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void DeleteRestaurant(Long id) {
+    public void deleteRestaurant(Long id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         restaurantRepository.delete(optionalRestaurant.get());
