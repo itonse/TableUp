@@ -4,6 +4,7 @@ import com.itonse.tableup.manager.domain.Partnership;
 import com.itonse.tableup.manager.domain.Restaurant;
 import com.itonse.tableup.manager.model.PartnershipInput;
 import com.itonse.tableup.manager.model.AddRestaurantInput;
+import com.itonse.tableup.manager.model.UpdateRestaurantInput;
 import com.itonse.tableup.manager.repository.PartnershipRepository;
 import com.itonse.tableup.manager.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,49 @@ public class ManagerServiceImpl implements ManagerService {
                 .build();
 
         restaurantRepository.save(restaurant);
+    }
+
+    @Override
+    public boolean CheckAuthorization(Long id, String partnershipEmail, String partnershipPassword) {
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
+        Optional<Partnership> optionalPartnership =
+                partnershipRepository.findPartnershipByEmailAndPassword(partnershipEmail, partnershipPassword);
+
+        String restaurantPartnerEmail = optionalRestaurant.get().getPartnership().getEmail();
+        String partnerEmail = optionalPartnership.get().getEmail();
+
+        if (!restaurantPartnerEmail.equals(partnerEmail)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void UpdateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id) {
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
+
+        Restaurant restaurant = optionalRestaurant.get();
+
+        if (updateRestaurantInput.getRestaurantName() != null) {
+            restaurant.setRestaurantName(updateRestaurantInput.getRestaurantName());
+        }
+
+        if (updateRestaurantInput.getRestaurantLocation() != null) {
+            restaurant.setRestaurantLocation(updateRestaurantInput.getRestaurantLocation());
+        }
+
+        if (updateRestaurantInput.getRestaurantDescription() != null) {
+            restaurant.setRestaurantDescription(updateRestaurantInput.getRestaurantDescription());
+        }
+
+        restaurantRepository.save(restaurant);
+    }
+
+    @Override
+    public void DeleteRestaurant(Long id) {
+        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
+
+        restaurantRepository.delete(optionalRestaurant.get());
     }
 }

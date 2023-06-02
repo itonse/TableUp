@@ -1,17 +1,13 @@
 package com.itonse.tableup.manager.controller;
 
 import com.itonse.tableup.manager.domain.Partnership;
-import com.itonse.tableup.manager.model.PartnershipInput;
-import com.itonse.tableup.manager.model.ResponseError;
-import com.itonse.tableup.manager.model.AddRestaurantInput;
+import com.itonse.tableup.manager.model.*;
 import com.itonse.tableup.manager.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -47,7 +43,8 @@ public class ApiManagerController {
 
     // 매장 신규 등록
     @PostMapping("/manager/restaurant/register")
-    public ResponseEntity<?> AddRestaurant(@RequestBody @Valid AddRestaurantInput addRestaurantInput, Errors errors) {
+    public ResponseEntity<?> AddRestaurant(@RequestBody @Valid AddRestaurantInput addRestaurantInput
+            , Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -75,5 +72,56 @@ public class ApiManagerController {
         managerService.addRestaurant(addRestaurantInput, partnershipMember);
 
         return ResponseEntity.ok().body("매장이 등록되었습니다.");
+    }
+
+    // 매장 정보 수정
+    @PatchMapping("/manager/restaurant/{id}/update")
+    public ResponseEntity<?> updateRestaurant(@PathVariable Long id
+                                              ,@RequestBody @Valid UpdateRestaurantInput updateRestaurantInput, Errors errors) {
+
+        if (errors.hasErrors()) {
+            ResponseError responseError = new ResponseError();
+            return responseError.ResponseErrorList(errors);
+        }
+
+        // 수정 권한 확인
+        boolean authorization =
+        managerService.CheckAuthorization(
+                id, updateRestaurantInput.getPartnershipEmail(), updateRestaurantInput.getPartnershipPassword()
+        );
+
+        if (!authorization) {
+            return new ResponseEntity<>("매장정보 수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 매장정보 수정 진행
+        managerService.UpdateRestaurant(updateRestaurantInput, id);
+
+        return new ResponseEntity<>("매장정보 수정을 완료했습니다.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/manager/restaurant/{id}/delete")
+    public ResponseEntity<?> deleteRestaurant(@PathVariable Long id
+            ,@RequestBody @Valid DeleteRestaurantInput deleteRestaurantInput, Errors errors) {
+
+        if (errors.hasErrors()) {
+            ResponseError responseError = new ResponseError();
+            return responseError.ResponseErrorList(errors);
+        }
+
+        // 삭제권한 확인
+        boolean authorization =
+                managerService.CheckAuthorization(
+                        id, deleteRestaurantInput.getPartnershipEmail(), deleteRestaurantInput.getPartnershipPassword()
+                );
+
+        if (!authorization) {
+            return new ResponseEntity<>("매장정보 삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 매장정보 삭제 진행
+        managerService.DeleteRestaurant(id);
+
+        return new ResponseEntity<>("매장정보를 삭제하였습니다.", HttpStatus.OK);
     }
 }
