@@ -2,10 +2,18 @@ package com.itonse.tableup.customer.service;
 
 import com.itonse.tableup.customer.domain.Member;
 import com.itonse.tableup.customer.model.MembershipInput;
+import com.itonse.tableup.customer.model.RestaurantResponse;
 import com.itonse.tableup.customer.repository.MemberRepository;
+import com.itonse.tableup.manager.domain.Restaurant;
+import com.itonse.tableup.manager.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -13,6 +21,7 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final MemberRepository memberRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Override
     public Boolean getIsRegisteredMembership(MembershipInput membershipInput) {
@@ -58,5 +67,31 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Member> optionalMember = memberRepository.findById(id);
 
         memberRepository.delete(optionalMember.get());
+    }
+
+    @Override
+    public Page<Restaurant> getRestaurantPageSortedByName(int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+
+        return restaurantRepository.findAllByOrderByRestaurantNameAsc(pageable);
+    }
+
+    @Override
+    public Page<Restaurant> getRestaurantPageSortedByStar(int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+
+        return restaurantRepository.findAllByOrderByStarDesc(pageable);
+    }
+
+    @Override
+    public List<RestaurantResponse> PageToList(Page<Restaurant> paging) {
+        List<Restaurant> restaurantList = paging.toList();
+        List<RestaurantResponse> responseList = new ArrayList<>();
+
+        restaurantList.stream().forEach((e) -> {
+            responseList.add(RestaurantResponse.of(e));
+        });
+
+        return responseList;
     }
 }

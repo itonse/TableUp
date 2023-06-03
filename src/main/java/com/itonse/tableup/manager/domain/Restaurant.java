@@ -20,7 +20,7 @@ public class Restaurant {    // 매장정보
 
     @ManyToOne
     @JoinColumn
-    private Partnership partnership;
+    private Partnership partnership;  //연관 테이블
 
     private String restaurantName;   // 매장명
 
