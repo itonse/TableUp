@@ -1,5 +1,6 @@
 package com.itonse.tableup.manager.domain;
 
+import com.itonse.tableup.customer.domain.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Restaurant {    // 매장정보
     private long id;  // 매장 고유번호
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "partnership_id", referencedColumnName = "id", nullable = false)
     private Partnership partnership;  //연관 테이블
 
     private String restaurantName;   // 매장명

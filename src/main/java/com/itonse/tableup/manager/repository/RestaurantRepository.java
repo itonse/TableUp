@@ -18,4 +18,6 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     Page<Restaurant> findAllByOrderByRestaurantNameAsc(Pageable pageable);
 
     Page<Restaurant> findAllByOrderByStarDesc(Pageable pageable);
+
+    Restaurant findByRestaurantName(String restaurantName);
 }

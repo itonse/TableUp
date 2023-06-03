@@ -2,6 +2,7 @@ package com.itonse.tableup.customer.controller;
 
 import com.itonse.tableup.customer.model.DeleteMembershipInput;
 import com.itonse.tableup.customer.model.MembershipInput;
+import com.itonse.tableup.customer.model.ReservationInput;
 import com.itonse.tableup.customer.model.RestaurantResponse;
 import com.itonse.tableup.customer.service.CustomerService;
 import com.itonse.tableup.manager.domain.Restaurant;
@@ -14,6 +15,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -82,5 +85,33 @@ public class ApiCustomerController {
         Page<Restaurant> paging = customerService.getRestaurantPageSortedByStar(page);
 
         return customerService.PageToList(paging);
+    }
+
+    // 식당 예약
+    @PostMapping("/customer/reservation")
+    public ResponseEntity<?> reserveRestaurant(@RequestBody @Valid ReservationInput reservationInput, Errors errors) {
+        if (errors.hasErrors()) {
+            ResponseError responseError = new ResponseError();
+            return responseError.ResponseErrorList(errors);
+        }
+
+        // 멤버쉽 로그인
+        boolean loginResult = customerService.getLoginResult(reservationInput);
+
+        if (loginResult == false) {
+            return new ResponseEntity<>("멤버쉽 회원이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 예약 진행
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(reservationInput.getDateTime(), formatter);
+
+        if (!LocalDateTime.now().plusMinutes(30).isBefore(dateTime)) {
+            return new ResponseEntity<>("현재 시간으로부터 30분 이후의 타임부터 예약이 가능합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        customerService.reserveRestaurant(reservationInput, dateTime);
+
+        return ResponseEntity.ok().body("예약이 완료되었습니다. 예약 시간 10분 전까지 매장에 도착하여 키오스크를 통해 도착확인을 진행해 주세요!");
     }
 }

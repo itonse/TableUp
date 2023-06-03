@@ -25,4 +25,5 @@ public class Partnership {    // 파트너쉽 가입
     private String ownerName;  // 사장님 성함
 
     private String phone;   // 연락처
+
 }

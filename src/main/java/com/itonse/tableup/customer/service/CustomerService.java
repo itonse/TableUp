@@ -1,10 +1,12 @@
 package com.itonse.tableup.customer.service;
 
 import com.itonse.tableup.customer.model.MembershipInput;
+import com.itonse.tableup.customer.model.ReservationInput;
 import com.itonse.tableup.customer.model.RestaurantResponse;
 import com.itonse.tableup.manager.domain.Restaurant;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CustomerService {
@@ -22,4 +24,8 @@ public interface CustomerService {
     Page<Restaurant> getRestaurantPageSortedByStar(int page);
 
     List<RestaurantResponse> PageToList(Page<Restaurant> paging);
+
+    boolean getLoginResult(ReservationInput reservationInput);
+
+    void reserveRestaurant(ReservationInput reservationInput, LocalDateTime localDateTime);
 }
