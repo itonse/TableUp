@@ -49,7 +49,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean checkDeleteAuthorization(Long id, String membershipEmail, String membershipPassword) {
+    public boolean checkDeleteAuthorization(
+            Long id, String membershipEmail, String membershipPassword) {
+
         Optional<Member> optionalDeleteMember = memberRepository.findById(id);
         Optional<Member> optionalMember = memberRepository.findByEmailAndPassword(
                 membershipEmail, membershipPassword);
@@ -109,7 +111,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void reserveRestaurant(ReservationInputDto reservationInputDto, LocalDateTime localDateTime) {
+    public void reserveRestaurant(
+            ReservationInputDto reservationInputDto, LocalDateTime localDateTime) {
+
         Member member = memberRepository.findByUserName(reservationInputDto.getUserName());
         Restaurant restaurant =
                 restaurantRepository.findByRestaurantName(reservationInputDto.getRestaurantName());

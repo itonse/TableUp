@@ -22,7 +22,8 @@ public class ApiManagerController {
 
     // 파트너쉽 가입 (회원 중복 체크)
     @PostMapping("/manager/partnership/new")
-    public ResponseEntity<?> SignUpPartnership(@RequestBody @Valid PartnershipInputDto partnershipInputDto, Errors errors) {
+    public ResponseEntity<?> SignUpPartnership(
+            @RequestBody @Valid PartnershipInputDto partnershipInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -45,7 +46,8 @@ public class ApiManagerController {
 
     // 매장 신규 등록
     @PostMapping("/manager/restaurant/register")
-    public ResponseEntity<?> AddRestaurant(@RequestBody @Valid AddRestaurantInputDto addRestaurantInputDto
+    public ResponseEntity<?> AddRestaurant(
+            @RequestBody @Valid AddRestaurantInputDto addRestaurantInputDto
             , Errors errors) {
 
         if (errors.hasErrors()) {
@@ -79,8 +81,9 @@ public class ApiManagerController {
 
     // 매장 정보 수정
     @PatchMapping("/manager/restaurant/{id}/update")
-    public ResponseEntity<?> updateRestaurant(@PathVariable Long id
-                                              , @RequestBody @Valid UpdateRestaurantInputDto updateRestaurantInputDto, Errors errors) {
+    public ResponseEntity<?> updateRestaurant(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateRestaurantInputDto updateRestaurantInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -90,7 +93,9 @@ public class ApiManagerController {
         // 수정 권한 확인
         boolean authorization =
         managerService.checkAuthorization(
-                id, updateRestaurantInputDto.getPartnershipEmail(), updateRestaurantInputDto.getPartnershipPassword()
+                id,
+                updateRestaurantInputDto.getPartnershipEmail(),
+                updateRestaurantInputDto.getPartnershipPassword()
         );
 
         if (!authorization) {
@@ -109,7 +114,8 @@ public class ApiManagerController {
 
     @DeleteMapping("/manager/restaurant/{id}/delete")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long id
-            , @RequestBody @Valid DeleteRestaurantInputDto deleteRestaurantInputDto, Errors errors) {
+            , @RequestBody @Valid DeleteRestaurantInputDto deleteRestaurantInputDto
+            , Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -119,7 +125,9 @@ public class ApiManagerController {
         // 삭제권한 확인
         boolean authorization =
                 managerService.checkAuthorization(
-                        id, deleteRestaurantInputDto.getPartnershipEmail(), deleteRestaurantInputDto.getPartnershipPassword()
+                        id,
+                        deleteRestaurantInputDto.getPartnershipEmail(),
+                        deleteRestaurantInputDto.getPartnershipPassword()
                 );
 
         if (!authorization) {

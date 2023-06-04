@@ -25,7 +25,8 @@ public class ApiCustomerController {
 
     // 회원가입
     @PostMapping("/customer/membership/new")
-    public ResponseEntity<?> SignUpMembership(@RequestBody @Valid MembershipInputDto membershipInputDto, Errors errors) {
+    public ResponseEntity<?> SignUpMembership(
+            @RequestBody @Valid MembershipInputDto membershipInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -51,7 +52,9 @@ public class ApiCustomerController {
 
     // 회원탈퇴
     @DeleteMapping("/customer/membership/{id}/delete")
-    public ResponseEntity<?> deleteMembership(@PathVariable Long id, @RequestBody DeleteMembershipInputDto deleteMembershipInputDto, Errors errors) {
+    public ResponseEntity<?> deleteMembership(
+            @PathVariable Long id,
+            @RequestBody DeleteMembershipInputDto deleteMembershipInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -91,7 +94,8 @@ public class ApiCustomerController {
 
     // 식당 예약
     @PostMapping("/customer/reservation")
-    public ResponseEntity<?> reserveRestaurant(@RequestBody @Valid ReservationInputDto reservationInputDto, Errors errors) {
+    public ResponseEntity<?> reserveRestaurant(
+            @RequestBody @Valid ReservationInputDto reservationInputDto, Errors errors) {
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
             return responseError.ResponseErrorList(errors);
@@ -111,17 +115,20 @@ public class ApiCustomerController {
         LocalDateTime localDateTime = DateTimeToLocalDateTime.from(reservationInputDto.getDateTime());
 
         if (!LocalDateTime.now().plusMinutes(30).isBefore(localDateTime)) {
-            return new ResponseEntity<>("현재 시간으로부터 30분 이후의 타임부터 예약이 가능합니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    "현재 시간으로부터 30분 이후의 타임부터 예약이 가능합니다.", HttpStatus.BAD_REQUEST);
         }
 
         customerService.reserveRestaurant(reservationInputDto, localDateTime);
 
-        return ResponseEntity.ok().body("예약이 완료되었습니다. 예약 시간 10분 전까지 매장에 도착하여 키오스크를 통해 도착확인을 진행해 주세요!");
+        return ResponseEntity.ok()
+                .body("예약이 완료되었습니다. 예약 시간 10분 전까지 매장에 도착하여 키오스크를 통해 도착확인을 진행해 주세요!");
     }
 
     // 식당예약 취소
     @DeleteMapping("/customer/reservation/cancel")
-    public ResponseEntity<?> CancelReservation(@RequestBody @Valid ReservationInputDto reservationInputDto, Errors errors) {
+    public ResponseEntity<?> CancelReservation(
+            @RequestBody @Valid ReservationInputDto reservationInputDto, Errors errors) {
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
             return responseError.ResponseErrorList(errors);
@@ -144,7 +151,8 @@ public class ApiCustomerController {
             return new ResponseEntity<>("예약 시간 30분 전까지만 취소가 가능합니다.", HttpStatus.BAD_REQUEST);
         }
 
-        boolean serviceResult = customerService.CancelReservation(reservationInputDto.getUserName(), localDateTime);
+        boolean serviceResult =
+                customerService.CancelReservation(reservationInputDto.getUserName(), localDateTime);
 
         if (!serviceResult) {
             return new ResponseEntity<>("예약 정보가 존재하지 않습니다", HttpStatus.BAD_REQUEST);

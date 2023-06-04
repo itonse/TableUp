@@ -4,7 +4,6 @@ import com.itonse.tableup.manager.domain.Partnership;
 import com.itonse.tableup.manager.domain.Restaurant;
 import com.itonse.tableup.manager.dto.PartnershipInputDto;
 import com.itonse.tableup.manager.dto.AddRestaurantInputDto;
-import com.itonse.tableup.manager.dto.UpdateRestaurantInputDto;
 import com.itonse.tableup.manager.repository.PartnershipRepository;
 import com.itonse.tableup.manager.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +71,9 @@ public class ManagerServiceImpl implements ManagerService {
     public boolean checkAuthorization(Long id, String partnershipEmail, String partnershipPassword) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
         Optional<Partnership> optionalPartnership =
-                partnershipRepository.findPartnershipByEmailAndPassword(partnershipEmail, partnershipPassword);
+                partnershipRepository.findPartnershipByEmailAndPassword(
+                        partnershipEmail, partnershipPassword
+                );
 
         if (!optionalRestaurant.isPresent() || !optionalPartnership.isPresent()) {
             return false;
@@ -89,7 +90,9 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void updateRestaurant(String restaurantName, String restaurantLocation, String restaurantDescription, Long id) {
+    public void updateRestaurant(String restaurantName, String restaurantLocation
+            , String restaurantDescription, Long id) {
+
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         Restaurant restaurant = optionalRestaurant.get();
