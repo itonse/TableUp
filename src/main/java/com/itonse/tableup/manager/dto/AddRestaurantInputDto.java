@@ -1,4 +1,4 @@
-package com.itonse.tableup.manager.model;
+package com.itonse.tableup.manager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 @Data
-public class AddRestaurantInput {
+public class AddRestaurantInputDto {
 
     @NotBlank(message = "매장명은 필수 입력 항목입니다.")
     private String restaurantName;   // 매장명

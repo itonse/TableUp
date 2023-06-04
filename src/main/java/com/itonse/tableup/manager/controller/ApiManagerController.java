@@ -1,7 +1,8 @@
 package com.itonse.tableup.manager.controller;
 
 import com.itonse.tableup.manager.domain.Partnership;
-import com.itonse.tableup.manager.model.*;
+import com.itonse.tableup.manager.dto.*;
+import com.itonse.tableup.manager.model.ResponseError;
 import com.itonse.tableup.manager.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class ApiManagerController {
 
     // 파트너쉽 가입 (회원 중복 체크)
     @PostMapping("/manager/partnership/new")
-    public ResponseEntity<?> SignUpPartnership(@RequestBody @Valid PartnershipInput partnershipInput, Errors errors) {
+    public ResponseEntity<?> SignUpPartnership(@RequestBody @Valid PartnershipInputDto partnershipInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -29,21 +30,21 @@ public class ApiManagerController {
         }
 
         // 이미 파트너쉽에 등록되어있는 고객인지 확인
-        Boolean registered = managerService.getIsRegisteredPartnership(partnershipInput);
+        Boolean registered = managerService.getIsRegisteredPartnership(partnershipInputDto);
 
         if (registered) {
             return new ResponseEntity("이미 가입된 회원입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 파트너쉽 등록
-        managerService.addPartnership(partnershipInput);
+        managerService.addPartnership(partnershipInputDto);
 
         return ResponseEntity.ok().body("파트너쉽에 가입되었습니다. 바로 이용해 주세요!");
     }
 
     // 매장 신규 등록
     @PostMapping("/manager/restaurant/register")
-    public ResponseEntity<?> AddRestaurant(@RequestBody @Valid AddRestaurantInput addRestaurantInput
+    public ResponseEntity<?> AddRestaurant(@RequestBody @Valid AddRestaurantInputDto addRestaurantInputDto
             , Errors errors) {
 
         if (errors.hasErrors()) {
@@ -52,7 +53,7 @@ public class ApiManagerController {
         }
 
         // 이미 등록된 매장인지 확인
-        Boolean registered = managerService.getIsRegisteredRestaurant(addRestaurantInput);
+        Boolean registered = managerService.getIsRegisteredRestaurant(addRestaurantInputDto);
 
         if (registered) {
             return new ResponseEntity<>("이미 등록된 매장입니다.", HttpStatus.BAD_REQUEST);
@@ -60,7 +61,7 @@ public class ApiManagerController {
 
         // 파트너쉽에 가입된 회원인지 확인
         Optional<Partnership> partnership = managerService.getPartnershipMember(
-                addRestaurantInput.getPartnershipEmail(), addRestaurantInput.getPartnershipPassword());
+                addRestaurantInputDto.getPartnershipEmail(), addRestaurantInputDto.getPartnershipPassword());
 
         if (!partnership.isPresent()) {
             return new ResponseEntity<>("파트너쉽에 가입된 정보가 없습니다.", HttpStatus.BAD_REQUEST);
@@ -69,7 +70,7 @@ public class ApiManagerController {
         // 매장 등록
         Partnership partnershipMember = partnership.get();
 
-        managerService.addRestaurant(addRestaurantInput, partnershipMember);
+        managerService.addRestaurant(addRestaurantInputDto, partnershipMember);
 
         return ResponseEntity.ok().body("매장이 등록되었습니다.");
     }
@@ -77,7 +78,7 @@ public class ApiManagerController {
     // 매장 정보 수정
     @PatchMapping("/manager/restaurant/{id}/update")
     public ResponseEntity<?> updateRestaurant(@PathVariable Long id
-                                              ,@RequestBody @Valid UpdateRestaurantInput updateRestaurantInput, Errors errors) {
+                                              , @RequestBody @Valid UpdateRestaurantInputDto updateRestaurantInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -87,7 +88,7 @@ public class ApiManagerController {
         // 수정 권한 확인
         boolean authorization =
         managerService.checkAuthorization(
-                id, updateRestaurantInput.getPartnershipEmail(), updateRestaurantInput.getPartnershipPassword()
+                id, updateRestaurantInputDto.getPartnershipEmail(), updateRestaurantInputDto.getPartnershipPassword()
         );
 
         if (!authorization) {
@@ -95,14 +96,14 @@ public class ApiManagerController {
         }
 
         // 매장정보 수정 진행
-        managerService.updateRestaurant(updateRestaurantInput, id);
+        managerService.updateRestaurant(updateRestaurantInputDto, id);
 
         return new ResponseEntity<>("매장정보 수정을 완료했습니다.", HttpStatus.OK);
     }
 
     @DeleteMapping("/manager/restaurant/{id}/delete")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long id
-            ,@RequestBody @Valid DeleteRestaurantInput deleteRestaurantInput, Errors errors) {
+            , @RequestBody @Valid DeleteRestaurantInputDto deleteRestaurantInputDto, Errors errors) {
 
         if (errors.hasErrors()) {
             ResponseError responseError = new ResponseError();
@@ -112,7 +113,7 @@ public class ApiManagerController {
         // 삭제권한 확인
         boolean authorization =
                 managerService.checkAuthorization(
-                        id, deleteRestaurantInput.getPartnershipEmail(), deleteRestaurantInput.getPartnershipPassword()
+                        id, deleteRestaurantInputDto.getPartnershipEmail(), deleteRestaurantInputDto.getPartnershipPassword()
                 );
 
         if (!authorization) {

@@ -1,4 +1,4 @@
-package com.itonse.tableup.customer.model;
+package com.itonse.tableup.customer.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 @Data
-public class MembershipInput {
+public class MembershipInputDto {
 
     @NotBlank(message = "이메일은 필수 항목 입니다.")
     private String email;

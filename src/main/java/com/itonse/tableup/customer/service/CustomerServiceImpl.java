@@ -2,13 +2,14 @@ package com.itonse.tableup.customer.service;
 
 import com.itonse.tableup.customer.domain.Member;
 import com.itonse.tableup.customer.domain.Reservation;
-import com.itonse.tableup.customer.model.MembershipInput;
-import com.itonse.tableup.customer.model.ReservationInput;
+import com.itonse.tableup.customer.dto.MembershipInputDto;
+import com.itonse.tableup.customer.dto.ReservationInputDto;
 import com.itonse.tableup.customer.model.RestaurantResponse;
 import com.itonse.tableup.customer.repository.MemberRepository;
 import com.itonse.tableup.customer.repository.ReservationRepository;
 import com.itonse.tableup.manager.domain.Restaurant;
 import com.itonse.tableup.manager.repository.RestaurantRepository;
+import com.itonse.tableup.util.DateTimeToLocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,19 +30,19 @@ public class CustomerServiceImpl implements CustomerService {
     private final ReservationRepository reservationRepository;
 
     @Override
-    public Boolean getIsRegisteredMembership(MembershipInput membershipInput) {
+    public Boolean getIsRegisteredMembership(MembershipInputDto membershipInputDto) {
 
         return memberRepository.existsMemberByPhoneAndUserName(
-                membershipInput.getPhone(), membershipInput.getUserName());
+                membershipInputDto.getPhone(), membershipInputDto.getUserName());
     }
 
     @Override
-    public void addMembership(MembershipInput membershipInput) {
+    public void addMembership(MembershipInputDto membershipInputDto) {
         Member member = Member.builder()
-                .email(membershipInput.getEmail())
-                .password(membershipInput.getPassword())
-                .userName(membershipInput.getUserName())
-                .phone(membershipInput.getPhone())
+                .email(membershipInputDto.getEmail())
+                .password(membershipInputDto.getPassword())
+                .userName(membershipInputDto.getUserName())
+                .phone(membershipInputDto.getPhone())
                 .build();
 
         memberRepository.save(member);
@@ -101,30 +102,50 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean getLoginResult(ReservationInput reservationInput) {
+    public boolean getLoginResult(ReservationInputDto reservationInputDto) {
 
         return memberRepository.existsMemberByUserNameAndPassword(
-                reservationInput.getUserName(), reservationInput.getPassword()
+                reservationInputDto.getUserName(), reservationInputDto.getPassword()
         );
     }
 
     @Override
-    public void reserveRestaurant(ReservationInput reservationInput, LocalDateTime localDateTime) {
-        Member member = memberRepository.findByUserName(reservationInput.getUserName());
+    public void reserveRestaurant(ReservationInputDto reservationInputDto, LocalDateTime localDateTime) {
+        Member member = memberRepository.findByUserName(reservationInputDto.getUserName());
         Restaurant restaurant =
-                restaurantRepository.findByRestaurantName(reservationInput.getRestaurantName());
+                restaurantRepository.findByRestaurantName(reservationInputDto.getRestaurantName());
 
         String phoneNumberTail = member.getPhone().substring(member.getPhone().length() - 4);
 
         Reservation reservation = Reservation.builder()
-                .userName(reservationInput.getUserName())
+                .userName(reservationInputDto.getUserName())
                 .phoneNumberTail(phoneNumberTail)
-                .restaurantName(reservationInput.getRestaurantName())
+                .restaurantName(reservationInputDto.getRestaurantName())
                 .reservationTime(localDateTime)
                 .visited(false)
                 .restaurant(restaurant)
                 .build();
 
         reservationRepository.save(reservation);
+    }
+
+    @Override
+    public Reservation getKioskResult(String userName, String dateTime) {
+
+        LocalDateTime localDateTime = DateTimeToLocalDateTime.from(dateTime);
+
+        Optional<Reservation> OptionalReservation = reservationRepository
+                .findByUserNameAndReservationTime(userName, localDateTime);
+
+        Reservation reservation = OptionalReservation.get();
+
+        if (!LocalDateTime.now().isBefore(reservation.getReservationTime().minusMinutes(10))) {
+            return reservation;
+        } else {   // 예약시간 10분 전에 잘 도착한 경우
+            reservation.setVisited(true);
+            reservationRepository.save(reservation);
+
+            return reservation;
+        }
     }
 }

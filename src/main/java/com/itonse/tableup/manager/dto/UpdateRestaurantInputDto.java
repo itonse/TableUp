@@ -1,4 +1,4 @@
-package com.itonse.tableup.manager.model;
+package com.itonse.tableup.manager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 @Data
-public class UpdateRestaurantInput {
+public class UpdateRestaurantInputDto {
     @Nullable
     private String restaurantName;   // 매장명
 

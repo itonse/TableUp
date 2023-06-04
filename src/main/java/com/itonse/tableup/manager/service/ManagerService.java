@@ -1,19 +1,19 @@
 package com.itonse.tableup.manager.service;
 
 import com.itonse.tableup.manager.domain.Partnership;
-import com.itonse.tableup.manager.model.PartnershipInput;
-import com.itonse.tableup.manager.model.AddRestaurantInput;
-import com.itonse.tableup.manager.model.UpdateRestaurantInput;
+import com.itonse.tableup.manager.dto.PartnershipInputDto;
+import com.itonse.tableup.manager.dto.AddRestaurantInputDto;
+import com.itonse.tableup.manager.dto.UpdateRestaurantInputDto;
 
 import java.util.Optional;
 
 public interface ManagerService {
-    Boolean getIsRegisteredPartnership(PartnershipInput partnershipInput);
+    Boolean getIsRegisteredPartnership(PartnershipInputDto partnershipInputDto);
     Optional<Partnership> getPartnershipMember(String email, String password);
-    Boolean getIsRegisteredRestaurant(AddRestaurantInput addRestaurantInput);
-    void addPartnership(PartnershipInput partnershipInput);
-    void addRestaurant(AddRestaurantInput addRestaurantInput, Partnership partnership);
+    Boolean getIsRegisteredRestaurant(AddRestaurantInputDto addRestaurantInputDto);
+    void addPartnership(PartnershipInputDto partnershipInputDto);
+    void addRestaurant(AddRestaurantInputDto addRestaurantInputDto, Partnership partnership);
     boolean checkAuthorization(Long id, String partnershipEmail, String partnershipPassword);
-    void updateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id);
+    void updateRestaurant(UpdateRestaurantInputDto updateRestaurantInputDto, Long id);
     void deleteRestaurant(Long id);
 }

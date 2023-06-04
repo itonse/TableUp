@@ -2,9 +2,9 @@ package com.itonse.tableup.manager.service;
 
 import com.itonse.tableup.manager.domain.Partnership;
 import com.itonse.tableup.manager.domain.Restaurant;
-import com.itonse.tableup.manager.model.PartnershipInput;
-import com.itonse.tableup.manager.model.AddRestaurantInput;
-import com.itonse.tableup.manager.model.UpdateRestaurantInput;
+import com.itonse.tableup.manager.dto.PartnershipInputDto;
+import com.itonse.tableup.manager.dto.AddRestaurantInputDto;
+import com.itonse.tableup.manager.dto.UpdateRestaurantInputDto;
 import com.itonse.tableup.manager.repository.PartnershipRepository;
 import com.itonse.tableup.manager.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +21,10 @@ public class ManagerServiceImpl implements ManagerService {
 
 
     @Override
-    public Boolean getIsRegisteredPartnership(PartnershipInput partnershipInput) {
+    public Boolean getIsRegisteredPartnership(PartnershipInputDto partnershipInputDto) {
 
         return partnershipRepository.existsPartnershipByPhoneAndOwnerName(
-                partnershipInput.getPhone(), partnershipInput.getOwnerName());
+                partnershipInputDto.getPhone(), partnershipInputDto.getOwnerName());
     }
 
     @Override
@@ -37,30 +37,30 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Boolean getIsRegisteredRestaurant(AddRestaurantInput addRestaurantInput) {
+    public Boolean getIsRegisteredRestaurant(AddRestaurantInputDto addRestaurantInputDto) {
 
         return restaurantRepository.existsRestaurantByRestaurantNameAndRestaurantLocation(
-                addRestaurantInput.getRestaurantName(), addRestaurantInput.getRestaurantLocation());
+                addRestaurantInputDto.getRestaurantName(), addRestaurantInputDto.getRestaurantLocation());
     }
 
     @Override
-    public void addPartnership(PartnershipInput partnershipInput) {
+    public void addPartnership(PartnershipInputDto partnershipInputDto) {
         Partnership partnership = Partnership.builder()
-                .email(partnershipInput.getEmail())
-                .password(partnershipInput.getPassword())
-                .ownerName(partnershipInput.getOwnerName())
-                .phone(partnershipInput.getPhone())
+                .email(partnershipInputDto.getEmail())
+                .password(partnershipInputDto.getPassword())
+                .ownerName(partnershipInputDto.getOwnerName())
+                .phone(partnershipInputDto.getPhone())
                 .build();
 
         partnershipRepository.save(partnership);
     }
 
     @Override
-    public void addRestaurant(AddRestaurantInput addRestaurantInput, Partnership partnership) {
+    public void addRestaurant(AddRestaurantInputDto addRestaurantInputDto, Partnership partnership) {
         Restaurant restaurant = Restaurant.builder()
-                .restaurantName(addRestaurantInput.getRestaurantName())
-                .restaurantLocation(addRestaurantInput.getRestaurantLocation())
-                .restaurantDescription(addRestaurantInput.getRestaurantDescription())
+                .restaurantName(addRestaurantInputDto.getRestaurantName())
+                .restaurantLocation(addRestaurantInputDto.getRestaurantLocation())
+                .restaurantDescription(addRestaurantInputDto.getRestaurantDescription())
                 .partnership(partnership)
                 .build();
 
@@ -88,21 +88,21 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void updateRestaurant(UpdateRestaurantInput updateRestaurantInput, Long id) {
+    public void updateRestaurant(UpdateRestaurantInputDto updateRestaurantInputDto, Long id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         Restaurant restaurant = optionalRestaurant.get();
 
-        if (updateRestaurantInput.getRestaurantName() != null) {
-            restaurant.setRestaurantName(updateRestaurantInput.getRestaurantName());
+        if (updateRestaurantInputDto.getRestaurantName() != null) {
+            restaurant.setRestaurantName(updateRestaurantInputDto.getRestaurantName());
         }
 
-        if (updateRestaurantInput.getRestaurantLocation() != null) {
-            restaurant.setRestaurantLocation(updateRestaurantInput.getRestaurantLocation());
+        if (updateRestaurantInputDto.getRestaurantLocation() != null) {
+            restaurant.setRestaurantLocation(updateRestaurantInputDto.getRestaurantLocation());
         }
 
-        if (updateRestaurantInput.getRestaurantDescription() != null) {
-            restaurant.setRestaurantDescription(updateRestaurantInput.getRestaurantDescription());
+        if (updateRestaurantInputDto.getRestaurantDescription() != null) {
+            restaurant.setRestaurantDescription(updateRestaurantInputDto.getRestaurantDescription());
         }
 
         restaurantRepository.save(restaurant);

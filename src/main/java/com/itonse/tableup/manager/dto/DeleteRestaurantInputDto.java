@@ -1,4 +1,4 @@
-package com.itonse.tableup.manager.model;
+package com.itonse.tableup.manager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 @Data
-public class DeleteRestaurantInput {
+public class DeleteRestaurantInputDto {
 
     @NotBlank(message = "파트너쉽 이메일을 입력하세요.")
     private String partnershipEmail;  // 파트너쉽 이메일
