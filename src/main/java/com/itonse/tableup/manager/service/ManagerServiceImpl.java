@@ -21,10 +21,11 @@ public class ManagerServiceImpl implements ManagerService {
 
 
     @Override
-    public Boolean getIsRegisteredPartnership(PartnershipInputDto partnershipInputDto) {
+    public Boolean getIsRegisteredPartnership(String ownerName, String phone) {
 
         return partnershipRepository.existsPartnershipByPhoneAndOwnerName(
-                partnershipInputDto.getPhone(), partnershipInputDto.getOwnerName());
+                ownerName, phone
+        );
     }
 
     @Override
@@ -37,10 +38,10 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Boolean getIsRegisteredRestaurant(AddRestaurantInputDto addRestaurantInputDto) {
+    public Boolean getIsRegisteredRestaurant(String restaurantName, String restaurantLocation) {
 
         return restaurantRepository.existsRestaurantByRestaurantNameAndRestaurantLocation(
-                addRestaurantInputDto.getRestaurantName(), addRestaurantInputDto.getRestaurantLocation());
+                restaurantName, restaurantLocation);
     }
 
     @Override
@@ -88,21 +89,21 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public void updateRestaurant(UpdateRestaurantInputDto updateRestaurantInputDto, Long id) {
+    public void updateRestaurant(String restaurantName, String restaurantLocation, String restaurantDescription, Long id) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
 
         Restaurant restaurant = optionalRestaurant.get();
 
-        if (updateRestaurantInputDto.getRestaurantName() != null) {
-            restaurant.setRestaurantName(updateRestaurantInputDto.getRestaurantName());
+        if (restaurantName != null) {
+            restaurant.setRestaurantName(restaurantName);
         }
 
-        if (updateRestaurantInputDto.getRestaurantLocation() != null) {
-            restaurant.setRestaurantLocation(updateRestaurantInputDto.getRestaurantLocation());
+        if (restaurantLocation != null) {
+            restaurant.setRestaurantLocation(restaurantLocation);
         }
 
-        if (updateRestaurantInputDto.getRestaurantDescription() != null) {
-            restaurant.setRestaurantDescription(updateRestaurantInputDto.getRestaurantDescription());
+        if (restaurantDescription != null) {
+            restaurant.setRestaurantDescription(restaurantDescription);
         }
 
         restaurantRepository.save(restaurant);

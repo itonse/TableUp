@@ -30,10 +30,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final ReservationRepository reservationRepository;
 
     @Override
-    public Boolean getIsRegisteredMembership(MembershipInputDto membershipInputDto) {
+    public Boolean getIsRegisteredMembership(String phone, String userName) {
 
         return memberRepository.existsMemberByPhoneAndUserName(
-                membershipInputDto.getPhone(), membershipInputDto.getUserName());
+                phone, userName);
     }
 
     @Override
@@ -102,11 +102,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public boolean getLoginResult(ReservationInputDto reservationInputDto) {
+    public boolean getLoginResult(String userName, String password) {
 
         return memberRepository.existsMemberByUserNameAndPassword(
-                reservationInputDto.getUserName(), reservationInputDto.getPassword()
-        );
+                userName, password);
     }
 
     @Override
@@ -130,7 +129,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Reservation getKioskResult(String userName, String dateTime) {
+    public boolean CancelReservation(String userName, LocalDateTime localDateTime) {
+        Optional<Reservation> optionalReservation =
+                reservationRepository.findByUserNameAndReservationTime(
+                        userName, localDateTime
+                );
+
+        if (!optionalReservation.isPresent()) {
+            return false;
+        } else {
+            reservationRepository.delete(optionalReservation.get());
+            return true;
+        }
+    }
+
+    @Override
+    public Reservation getKioskArrivalCheckResult(String userName, String dateTime) {
 
         LocalDateTime localDateTime = DateTimeToLocalDateTime.from(dateTime);
 
@@ -148,4 +162,6 @@ public class CustomerServiceImpl implements CustomerService {
             return reservation;
         }
     }
+
+
 }

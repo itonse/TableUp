@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CustomerService {
 
-    Boolean getIsRegisteredMembership(MembershipInputDto membershipInputDto);
+    Boolean getIsRegisteredMembership(String phone, String userName);
 
     void addMembership(MembershipInputDto membershipInputDto);
 
@@ -26,9 +26,11 @@ public interface CustomerService {
 
     List<RestaurantResponse> PageToList(Page<Restaurant> paging);
 
-    boolean getLoginResult(ReservationInputDto reservationInputDto);
+    boolean getLoginResult(String userName, String password);
 
     void reserveRestaurant(ReservationInputDto reservationInputDto, LocalDateTime localDateTime);
 
-    Reservation getKioskResult(String userName, String dateTime);
+    boolean CancelReservation(String userName, LocalDateTime localDateTime);
+
+    Reservation getKioskArrivalCheckResult(String userName, String dateTime);
 }

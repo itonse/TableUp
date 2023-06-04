@@ -29,4 +29,16 @@ CREATE TABLE IF NOT EXISTS MEMBER
     PHONE       VARCHAR(100)
 )
 
+CREATE TABLE IF NOT EXISTS RESERVATION
+(
+    NO                         BIGINT auto_increment primary key,
+    USER_NAME                  VARCHAR(100),
+    PHONE_NUMBER_TAIL          VARCHAR(10),
+    RESTAURANT_NAME            VARCHAR(100),
+    RESERVATION_TIME           TIMESTAMP,
+    VISITED                    BOOLEAN,
+
+    constraint FK_RESERVATION_RESTAURANT_ID foreign key(RESTAURANT_ID) references RESTAURANT(ID)
+)
+
 

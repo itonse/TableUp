@@ -1,9 +1,6 @@
 package com.itonse.tableup.customer.controller;
 
-import com.itonse.tableup.customer.dto.DeleteMembershipInputDto;
-import com.itonse.tableup.customer.dto.KioskDto;
-import com.itonse.tableup.customer.dto.MembershipInputDto;
-import com.itonse.tableup.customer.dto.ReservationInputDto;
+import com.itonse.tableup.customer.dto.*;
 import com.itonse.tableup.customer.model.RestaurantResponse;
 import com.itonse.tableup.customer.service.CustomerService;
 import com.itonse.tableup.manager.domain.Restaurant;
@@ -36,7 +33,11 @@ public class ApiCustomerController {
         }
 
         // 이미 멤버쉽에 등록되어있는 고객인지 확인
-        Boolean registered = customerService.getIsRegisteredMembership(membershipInputDto);
+        Boolean registered =
+                customerService.getIsRegisteredMembership(
+                        membershipInputDto.getPhone(),
+                        membershipInputDto.getUserName()
+                );
 
         if (registered) {
             return new ResponseEntity("이미 가입된 회원입니다.", HttpStatus.BAD_REQUEST);
@@ -57,13 +58,13 @@ public class ApiCustomerController {
             return responseError.ResponseErrorList(errors);
         }
 
-        // 삭제권한 확인
+        // 탈퇴권한 확인
         boolean authorization =
                 customerService.checkDeleteAuthorization(
                         id, deleteMembershipInputDto.getEmail(), deleteMembershipInputDto.getPassword());
 
         if (!authorization) {
-            return new ResponseEntity<>("멤버 삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("회원 탈퇴 권한이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 회원탈퇴 진행
@@ -97,35 +98,71 @@ public class ApiCustomerController {
         }
 
         // 멤버쉽 로그인
-        boolean loginResult = customerService.getLoginResult(reservationInputDto);
+        boolean loginResult = customerService.getLoginResult(
+                reservationInputDto.getUserName(),
+                reservationInputDto.getPassword()
+        );
 
         if (loginResult == false) {
             return new ResponseEntity<>("멤버쉽 회원이 아닙니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 예약 진행
-        LocalDateTime dateTime = DateTimeToLocalDateTime.from(reservationInputDto.getDateTime());
+        LocalDateTime localDateTime = DateTimeToLocalDateTime.from(reservationInputDto.getDateTime());
 
-        if (!LocalDateTime.now().plusMinutes(30).isBefore(dateTime)) {
+        if (!LocalDateTime.now().plusMinutes(30).isBefore(localDateTime)) {
             return new ResponseEntity<>("현재 시간으로부터 30분 이후의 타임부터 예약이 가능합니다.", HttpStatus.BAD_REQUEST);
         }
 
-        customerService.reserveRestaurant(reservationInputDto, dateTime);
+        customerService.reserveRestaurant(reservationInputDto, localDateTime);
 
         return ResponseEntity.ok().body("예약이 완료되었습니다. 예약 시간 10분 전까지 매장에 도착하여 키오스크를 통해 도착확인을 진행해 주세요!");
     }
 
-    // 키오스크에 도착확인 진행
+    // 식당예약 취소
+    @DeleteMapping("/customer/reservation/cancel")
+    public ResponseEntity<?> CancelReservation(@RequestBody @Valid ReservationInputDto reservationInputDto, Errors errors) {
+        if (errors.hasErrors()) {
+            ResponseError responseError = new ResponseError();
+            return responseError.ResponseErrorList(errors);
+        }
+
+        // 멤버쉽 로그인
+        boolean loginResult = customerService.getLoginResult(
+                reservationInputDto.getUserName(),
+                reservationInputDto.getPassword()
+        );
+
+        if (loginResult == false) {
+            return new ResponseEntity<>("멤버쉽 회원이 아닙니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 식당예약 취소
+        LocalDateTime localDateTime = DateTimeToLocalDateTime.from(reservationInputDto.getDateTime());
+
+        if (LocalDateTime.now().isAfter(localDateTime.minusMinutes(30))) {
+            return new ResponseEntity<>("예약 시간 30분 전까지만 취소가 가능합니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        boolean serviceResult = customerService.CancelReservation(reservationInputDto.getUserName(), localDateTime);
+
+        if (!serviceResult) {
+            return new ResponseEntity<>("예약 정보가 존재하지 않습니다", HttpStatus.BAD_REQUEST);
+        } else {
+            return ResponseEntity.ok().body("예약이 취소되었습니다.");
+        }
+    }
+
+    // 키오스크에서 도착확인 진행
     @PatchMapping("/customer/reservation/location/arrival")
     public KioskDto.Response arrivalReservedRestaurant(@RequestBody @Valid KioskDto.Request request) {
 
-        // 방문체크가 정상적으로 완료되었으면 true, 예약시간 10분전 이후에 방문하였으면 false
+        // 방문체크가 정상적으로 완료되었으면 true, 예약기록이 없거나 예약시간 10분전 이후에 방문하였으면 false
         return KioskDto.Response.from(
-                customerService.getKioskResult(
+                customerService.getKioskArrivalCheckResult(
                         request.getUserName(),
                         request.getDateTime()
                 )
         );
     }
-
 }

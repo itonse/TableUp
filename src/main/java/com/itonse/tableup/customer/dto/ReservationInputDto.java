@@ -24,6 +24,6 @@ public class ReservationInputDto {
     private String restaurantName;
 
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$", message = "올바른 날짜와 시간 형식 (yyyy-MM-dd HH:mm) 으로 입력해주세요!")
-    @NotBlank(message = "원하시는 예약타임을 입력해주세요!")
+    @NotBlank(message = "예약타임을 입력해주세요")
     private String dateTime;
 }

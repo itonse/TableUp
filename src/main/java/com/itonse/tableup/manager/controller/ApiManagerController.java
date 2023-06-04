@@ -30,7 +30,8 @@ public class ApiManagerController {
         }
 
         // 이미 파트너쉽에 등록되어있는 고객인지 확인
-        Boolean registered = managerService.getIsRegisteredPartnership(partnershipInputDto);
+        Boolean registered = managerService.getIsRegisteredPartnership(
+                partnershipInputDto.getOwnerName(), partnershipInputDto.getPhone());
 
         if (registered) {
             return new ResponseEntity("이미 가입된 회원입니다.", HttpStatus.BAD_REQUEST);
@@ -53,7 +54,8 @@ public class ApiManagerController {
         }
 
         // 이미 등록된 매장인지 확인
-        Boolean registered = managerService.getIsRegisteredRestaurant(addRestaurantInputDto);
+        Boolean registered = managerService.getIsRegisteredRestaurant(
+                addRestaurantInputDto.getRestaurantName(), addRestaurantInputDto.getRestaurantLocation());
 
         if (registered) {
             return new ResponseEntity<>("이미 등록된 매장입니다.", HttpStatus.BAD_REQUEST);
@@ -96,7 +98,11 @@ public class ApiManagerController {
         }
 
         // 매장정보 수정 진행
-        managerService.updateRestaurant(updateRestaurantInputDto, id);
+        managerService.updateRestaurant(
+                updateRestaurantInputDto.getRestaurantName(),
+                updateRestaurantInputDto.getRestaurantLocation(),
+                updateRestaurantInputDto.getRestaurantDescription(),
+                id);
 
         return new ResponseEntity<>("매장정보 수정을 완료했습니다.", HttpStatus.OK);
     }
