@@ -60,7 +60,7 @@ public class ApiManagerController {
         );
 
         // 입력한 정보가 파트너쉽에 가입된 정보가 아닐 시
-        if (!optionalPartnership.isPresent()) {
+        if (optionalPartnership.isEmpty()) {
             return new ResponseEntity<>("회원 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -104,7 +104,7 @@ public class ApiManagerController {
                 addRestaurantInput.getPartnershipPassword()
         );
 
-        if (!partnership.isPresent()) {
+        if (partnership.isEmpty()) {
             return new ResponseEntity<>("파트너쉽에 가입된 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         }
 

@@ -95,7 +95,7 @@ public class ManagerServiceImpl implements ManagerService {
                         partnershipEmail, partnershipPassword
                 );
 
-        if (!optionalRestaurant.isPresent() || !optionalPartnership.isPresent()) {
+        if (optionalRestaurant.isEmpty() || optionalPartnership.isEmpty()) {
             return false;
         }
 
@@ -113,9 +113,8 @@ public class ManagerServiceImpl implements ManagerService {
     public void updateRestaurant(String restaurantName, String restaurantLocation
             , String restaurantDescription, Long id) {
 
-        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
-
-        Restaurant restaurant = optionalRestaurant.get();
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("id를 올바르게 입력해주세요."));
 
         if (restaurantName != null) {
             restaurant.setRestaurantName(restaurantName);

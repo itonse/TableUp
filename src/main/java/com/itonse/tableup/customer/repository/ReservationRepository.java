@@ -1,7 +1,6 @@
 package com.itonse.tableup.customer.repository;
 
 import com.itonse.tableup.customer.domain.Reservation;
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

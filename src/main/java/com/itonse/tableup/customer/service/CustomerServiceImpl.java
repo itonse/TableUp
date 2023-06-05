@@ -61,7 +61,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Member> optionalMember = memberRepository.findByEmailAndPassword(
                 membershipEmail, membershipPassword);
 
-        if (!optionalMember.isPresent() || !optionalDeleteMember.isPresent()) {
+        if (optionalMember.isEmpty() || optionalDeleteMember.isEmpty()) {
             return false;
         }
 
@@ -162,7 +162,7 @@ public class CustomerServiceImpl implements CustomerService {
                         userName, localDateTime
                 );
 
-        if (!optionalReservation.isPresent()) {
+        if (optionalReservation.isEmpty()) {
             return false;
         } else {
             reservationRepository.delete(optionalReservation.get());
@@ -209,7 +209,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Reservation> optionalReservation = reservationRepository
                 .findByPhoneNumberTailAndReservationTime(phoneNumberTail, localDateTime);
 
-        if (!optionalReservation.isPresent()) {
+        if (optionalReservation.isEmpty()) {
             return false;
         }
 
