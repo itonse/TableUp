@@ -30,22 +30,6 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Optional<Partnership> getPartnershipMember(String email, String password) {
-        Optional<Partnership> optionalPartnership =
-                partnershipRepository.findPartnershipByEmailAndPassword(
-                        email, password);
-
-        return optionalPartnership;
-    }
-
-    @Override
-    public boolean getIsRegisteredRestaurant(String restaurantName, String restaurantLocation) {
-
-        return restaurantRepository.existsRestaurantByRestaurantNameAndRestaurantLocation(
-                restaurantName, restaurantLocation);
-    }
-
-    @Override
     public void addPartnership(AddPartnership addPartnership) {
         Partnership partnership = Partnership.builder()
                 .email(addPartnership.getEmail())
@@ -55,6 +39,15 @@ public class ManagerServiceImpl implements ManagerService {
                 .build();
 
         partnershipRepository.save(partnership);
+    }
+
+    @Override
+    public Optional<Partnership> getPartnershipMember(String email, String password) {
+        Optional<Partnership> optionalPartnership =
+                partnershipRepository.findPartnershipByEmailAndPassword(
+                        email, password);
+
+        return optionalPartnership;
     }
 
     @Override
@@ -72,6 +65,13 @@ public class ManagerServiceImpl implements ManagerService {
                 ).orElseThrow(() -> new RuntimeException("삭제 할 파트너쉽을 찾지 못했습니다."));
 
         partnershipRepository.delete(partnership);
+    }
+
+    @Override
+    public boolean getIsRegisteredRestaurant(String restaurantName, String restaurantLocation) {
+
+        return restaurantRepository.existsRestaurantByRestaurantNameAndRestaurantLocation(
+                restaurantName, restaurantLocation);
     }
 
 

@@ -38,7 +38,7 @@ public class ApiManagerController {
             return new ResponseEntity("이미 가입된 회원입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 파트너쉽 등록
+        // 파트너쉽 가입
         managerService.addPartnership(addPartnership);
 
         return ResponseEntity.ok().body("파트너쉽에 가입되었습니다. 바로 이용해 주세요!");
@@ -59,23 +59,23 @@ public class ApiManagerController {
                 deletePartnershipInput.getPassword()
         );
 
-        // 입려한 정보가 파트너쉽에 가입된 정보가 아닐 시
+        // 입력한 정보가 파트너쉽에 가입된 정보가 아닐 시
         if (!optionalPartnership.isPresent()) {
             return new ResponseEntity<>("회원 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
         Partnership partnership = optionalPartnership.get();
 
-        int count = managerService.getRestaurantCount(partnership);
+        int count = managerService.getRestaurantCount(partnership);  // 해당 파트너쉽으로 현재 등록되어 있는 매장의 개수 가져오기
 
         // 등록된 매장이 있을 시
         if (count > 0) {
-            return new ResponseEntity<>("등록한 매장 정보를 삭제한 후에 회원 탈퇴를 진행해 주세요."
+            return new ResponseEntity<>("등록한 매장 정보를 삭제한 후에 파트너쉽 해지를 진행해 주세요."
                     , HttpStatus.BAD_REQUEST);
         } else {
-            managerService.deletePartnership(deletePartnershipInput);
+            managerService.deletePartnership(deletePartnershipInput);  // 파트너쉽 해지 진행
 
-            return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
+            return ResponseEntity.ok().body("파트너쉽 해지가 완료되었습니다. 다음에 다시 이용해주세요.");
         }
     }
 
@@ -139,7 +139,7 @@ public class ApiManagerController {
             return new ResponseEntity<>("매장정보 수정 권한이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 매장정보 수정 진행
+        // 매장정보 수정 진행 (매장명, 매장위치, 매장설명 변경 가능)
         managerService.updateRestaurant(
                 updateRestaurantInput.getRestaurantName(),
                 updateRestaurantInput.getRestaurantLocation(),

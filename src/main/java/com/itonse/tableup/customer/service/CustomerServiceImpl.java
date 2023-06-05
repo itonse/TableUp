@@ -225,6 +225,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public boolean isReviewWritten(String phone, String dateTime) {
+        String phoneNumberTail = phone.substring(phone.length() - 4);
+        LocalDateTime localDateTime = DateTimeToLocalDateTime.from(dateTime);
+        String visitedDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        boolean isWritten =
+                reviewRepository.existsByPhoneNumberTailAndVisitDate(phoneNumberTail, visitedDate);
+
+        if (isWritten) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public int writeReview(
             String restaurantName, String phone, String reviewContent, String dateTime, int star) {
 
@@ -279,22 +295,6 @@ public class CustomerServiceImpl implements CustomerService {
 
         restaurant.setStar(getRating);
         restaurantRepository.save(restaurant);
-    }
-
-    @Override
-    public boolean isReviewWritten(String phone, String dateTime) {
-        String phoneNumberTail = phone.substring(phone.length() - 4);
-        LocalDateTime localDateTime = DateTimeToLocalDateTime.from(dateTime);
-        String visitedDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        boolean isWritten =
-                reviewRepository.existsByPhoneNumberTailAndVisitDate(phoneNumberTail, visitedDate);
-
-        if (isWritten) {
-            return true;
-        }
-
-        return false;
     }
 
 

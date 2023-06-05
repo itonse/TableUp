@@ -76,13 +76,13 @@ public class ApiCustomerController {
         return new ResponseEntity<>("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
-    // 매장 검색하여 상세정보 보기
+    // 매장 검색하여 상세정보 보기 (매장명, 위치, 매장설명, 별점)
     @GetMapping("/customer/restaurant/search")
     public RestaurantResponse searchRestaurant(@RequestParam String restaurantName) {
         return customerService.getRestaurant(restaurantName);
     }
 
-    // 매장의 상세 목록 보기 -> 정렬(매장명 가나다순), 페이징처리(5개씩)
+    // 입력한 페이지에 해당하는 매장 목록들 가져오기 -> 정렬(매장명 가나다순), 페이징처리(5개씩)
     @GetMapping("/customer/restaurant/view/restaurantName/Asc")
     public List<RestaurantResponse> getRestaurantListSortedByName(@RequestParam int page) {
         Page<Restaurant> paging = customerService.getRestaurantPageSortedByName(page);
@@ -90,7 +90,7 @@ public class ApiCustomerController {
         return customerService.PageToList(paging);
     }
 
-    // 매장의 상세 목록 보기 -> 정렬(별점높은순), 페이징처리(5개씩)
+    // 입력한 페이지에 해당하는 매장 목록들 가져오기 -> 정렬(별점높은순), 페이징처리(5개씩)
     @GetMapping("/customer/restaurant/view/star/Decs")
     public List<RestaurantResponse> getRestaurantListSortedByStar(@RequestParam int page) {
         Page<Restaurant> paging = customerService.getRestaurantPageSortedByStar(page);
@@ -98,7 +98,7 @@ public class ApiCustomerController {
         return customerService.PageToList(paging);
     }
 
-    // 식당 예약
+    // 매장 예약
     @PostMapping("/customer/reservation")
     public ResponseEntity<?> reserveRestaurant(
             @RequestBody @Valid ReservationInput reservationInput, Errors errors) {
@@ -138,7 +138,7 @@ public class ApiCustomerController {
                 .body("예약이 완료되었습니다. 예약 시간 10분 전까지 매장에 도착하여 키오스크를 통해 도착확인을 진행해 주세요!");
     }
 
-    // 식당예약 취소
+    // 매장 예약 취소 (예약한 시간이 30분도 안남았으면 취소 불가)
     @DeleteMapping("/customer/reservation/cancel")
     public ResponseEntity<?> CancelReservation(
             @RequestBody @Valid ReservationInput reservationInput, Errors errors) {
@@ -158,7 +158,7 @@ public class ApiCustomerController {
             return new ResponseEntity<>("멤버쉽 회원이 아닙니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 식당예약 취소 (예약된 시간이 30분도 안 남았을 시에는 취소 불가능)
+        // 매장 예약 취소 (예약된 시간이 30분도 안 남았을 시에는 취소 불가능)
         LocalDateTime localDateTime = DateTimeToLocalDateTime.from(reservationInput.getDateTime());
 
         if (LocalDateTime.now().isAfter(localDateTime.minusMinutes(30))) {
@@ -175,7 +175,7 @@ public class ApiCustomerController {
         }
     }
 
-    // 키오스크에서 도착확인 진행
+    // 키오스크에서 도착확인 진행 (예약시간 10분 이전에 도착해야 체크 가능)
     @PatchMapping("/customer/reservation/location/arrival")
     public KioskDto.Response arrivalReservedRestaurant(@RequestBody @Valid KioskDto.Request request) {
 
@@ -198,7 +198,7 @@ public class ApiCustomerController {
             return responseError.ResponseErrorList(errors);
         }
 
-        // 리뷰 작성 권한 확인
+        // 리뷰 작성 권한 확인 (멤버쉽 회원이고, 예약한 정보가 있고, 방문체크가 되어있어야 권한 부여)
         boolean Authorization = customerService.checkReviewWriteAuthorization(
                 writeReviewInput.getPhone(),
                 writeReviewInput.getPassword(),
@@ -228,6 +228,7 @@ public class ApiCustomerController {
                 writeReviewInput.getStar()
                 );
 
+        // 매장 상세정보에 별점 업데이트 하기
         customerService.updateStar(star, writeReviewInput.getRestaurantName());
 
         return ResponseEntity.ok().body("리뷰작성을 완료하였습니다.");
