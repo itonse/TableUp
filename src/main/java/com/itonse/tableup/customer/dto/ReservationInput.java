@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Builder
 @Data
-public class ReservationInputDto {
+public class ReservationInput {
 
     @NotBlank(message = "이름은 필수항목 입니다.")
     private String userName;

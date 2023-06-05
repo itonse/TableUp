@@ -2,13 +2,15 @@ package com.itonse.tableup.manager.service;
 
 import com.itonse.tableup.manager.domain.Partnership;
 import com.itonse.tableup.manager.domain.Restaurant;
-import com.itonse.tableup.manager.dto.PartnershipInputDto;
-import com.itonse.tableup.manager.dto.AddRestaurantInputDto;
+import com.itonse.tableup.manager.dto.AddPartnership;
+import com.itonse.tableup.manager.dto.AddRestaurantInput;
+import com.itonse.tableup.manager.dto.DeletePartnership;
 import com.itonse.tableup.manager.repository.PartnershipRepository;
 import com.itonse.tableup.manager.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -20,47 +22,65 @@ public class ManagerServiceImpl implements ManagerService {
 
 
     @Override
-    public Boolean getIsRegisteredPartnership(String ownerName, String phone) {
+    public boolean getIsRegisteredPartnership(String ownerName, String phone) {
 
-        return partnershipRepository.existsPartnershipByPhoneAndOwnerName(
+        return partnershipRepository.existsByOwnerNameAndPhone(
                 ownerName, phone
         );
     }
 
     @Override
     public Optional<Partnership> getPartnershipMember(String email, String password) {
-        Optional<Partnership> partnership =
+        Optional<Partnership> optionalPartnership =
                 partnershipRepository.findPartnershipByEmailAndPassword(
                         email, password);
 
-        return partnership;
+        return optionalPartnership;
     }
 
     @Override
-    public Boolean getIsRegisteredRestaurant(String restaurantName, String restaurantLocation) {
+    public boolean getIsRegisteredRestaurant(String restaurantName, String restaurantLocation) {
 
         return restaurantRepository.existsRestaurantByRestaurantNameAndRestaurantLocation(
                 restaurantName, restaurantLocation);
     }
 
     @Override
-    public void addPartnership(PartnershipInputDto partnershipInputDto) {
+    public void addPartnership(AddPartnership addPartnership) {
         Partnership partnership = Partnership.builder()
-                .email(partnershipInputDto.getEmail())
-                .password(partnershipInputDto.getPassword())
-                .ownerName(partnershipInputDto.getOwnerName())
-                .phone(partnershipInputDto.getPhone())
+                .email(addPartnership.getEmail())
+                .password(addPartnership.getPassword())
+                .ownerName(addPartnership.getOwnerName())
+                .phone(addPartnership.getPhone())
                 .build();
 
         partnershipRepository.save(partnership);
     }
 
     @Override
-    public void addRestaurant(AddRestaurantInputDto addRestaurantInputDto, Partnership partnership) {
+    public int getRestaurantCount(Partnership partnership) {
+
+        return restaurantRepository.countByPartnership(partnership);
+    }
+
+    @Override
+    public void deletePartnership(DeletePartnership deletePartnership) {
+        Partnership partnership =
+                partnershipRepository.findPartnershipByEmailAndPassword(
+                        deletePartnership.getEmail(),
+                        deletePartnership.getPassword()
+                ).orElseThrow(() -> new RuntimeException("삭제 할 파트너쉽을 찾지 못했습니다."));
+
+        partnershipRepository.delete(partnership);
+    }
+
+
+    @Override
+    public void addRestaurant(AddRestaurantInput addRestaurantInput, Partnership partnership) {
         Restaurant restaurant = Restaurant.builder()
-                .restaurantName(addRestaurantInputDto.getRestaurantName())
-                .restaurantLocation(addRestaurantInputDto.getRestaurantLocation())
-                .restaurantDescription(addRestaurantInputDto.getRestaurantDescription())
+                .restaurantName(addRestaurantInput.getRestaurantName())
+                .restaurantLocation(addRestaurantInput.getRestaurantLocation())
+                .restaurantDescription(addRestaurantInput.getRestaurantDescription())
                 .partnership(partnership)
                 .build();
 
@@ -114,8 +134,10 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void deleteRestaurant(Long id) {
-        Optional<Restaurant> optionalRestaurant = restaurantRepository.findById(id);
+        Restaurant restaurant = restaurantRepository.findById(id)
+                        .orElseThrow(()
+                                -> new NoSuchElementException("매장 정보가 없습니다."));
 
-        restaurantRepository.delete(optionalRestaurant.get());
+        restaurantRepository.delete(restaurant);
     }
 }

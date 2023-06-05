@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 @Data
-public class PartnershipInputDto {
+public class AddPartnership {
 
     @NotBlank(message = "이메일은 필수 항목 입니다.")
     private String email;

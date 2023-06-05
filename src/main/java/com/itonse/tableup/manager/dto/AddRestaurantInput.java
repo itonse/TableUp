@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 @Data
-public class AddRestaurantInputDto {
+public class AddRestaurantInput {
 
     @NotBlank(message = "매장명은 필수 입력 항목입니다.")
     private String restaurantName;   // 매장명

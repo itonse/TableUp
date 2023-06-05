@@ -12,11 +12,18 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 @Data
-public class DeleteMembershipInputDto {
+public class MembershipInput {
+
     @NotBlank(message = "이메일은 필수 항목 입니다.")
     private String email;
 
     @Size(min = 8, message = "비밀번호는 8자 이상으로 입력해주세요.")
     @NotBlank(message = "비밀번호는 필수 항목 입니다.")
     private String password;
+
+    @NotBlank(message = "이름은 필수 항목 입니다.")
+    private String userName;
+
+    @NotBlank(message = "연락처는 필수 항목 입니다.")
+    private String phone;
 }

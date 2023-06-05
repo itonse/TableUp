@@ -1,4 +1,4 @@
-package com.itonse.tableup.customer.dto;
+package com.itonse.tableup.manager.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 @Data
-public class MembershipInputDto {
+public class DeletePartnership {
 
     @NotBlank(message = "이메일은 필수 항목 입니다.")
     private String email;
@@ -20,10 +20,4 @@ public class MembershipInputDto {
     @Size(min = 8, message = "비밀번호는 8자 이상으로 입력해주세요.")
     @NotBlank(message = "비밀번호는 필수 항목 입니다.")
     private String password;
-
-    @NotBlank(message = "이름은 필수 항목 입니다.")
-    private String userName;
-
-    @NotBlank(message = "연락처는 필수 항목 입니다.")
-    private String phone;
 }

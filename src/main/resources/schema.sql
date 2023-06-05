@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS PARTNERSHIP
 CREATE TABLE IF NOT EXISTS RESTAURANT
 (
     ID                         BIGINT auto_increment primary key,
+    PARTNERSHIP_ID             BIGINT NOT NULL,
     RESTAURANT_NAME            VARCHAR(100),
     RESTAURANT_LOCATION        VARCHAR(100),
     RESTAURANT_DESCRIPTION     VARCHAR(255),
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS MEMBER
 CREATE TABLE IF NOT EXISTS RESERVATION
 (
     NO                         BIGINT auto_increment primary key,
+    RESTAURANT_ID              BIGINT NOT NULL,
     USER_NAME                  VARCHAR(100),
     PHONE_NUMBER_TAIL          VARCHAR(10),
     RESTAURANT_NAME            VARCHAR(100),
@@ -39,6 +41,19 @@ CREATE TABLE IF NOT EXISTS RESERVATION
     VISITED                    BOOLEAN,
 
     constraint FK_RESERVATION_RESTAURANT_ID foreign key(RESTAURANT_ID) references RESTAURANT(ID)
+)
+
+CREATE TABLE IF NOT EXISTS REVIEW
+(
+    NO                         BIGINT auto_increment primary key,
+    RESTAURANT_ID              BIGINT NOT NULL,
+    RESTAURANT_NAME            VARCHAR(100),
+    PHONE_NUMBER_TAIL          VARCHAR(10),
+    REVIEW_CONTENT             VARCHAR(255),
+    VISIT_DATE                 VARCHAR(100),
+    STAR                       INT,
+
+    constraint FK_REVIEW_RESTAURANT_ID foreign key(RESTAURANT_ID) references RESTAURANT(ID)
 )
 
 

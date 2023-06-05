@@ -11,5 +11,5 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Long> 
 
     Optional<Partnership> findPartnershipByEmailAndPassword(String email, String password);
 
-    boolean existsPartnershipByPhoneAndOwnerName(String phone, String ownerName);
+    boolean existsByOwnerNameAndPhone(String ownerName, String phone);
 }

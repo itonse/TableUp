@@ -1,16 +1,14 @@
 package com.itonse.tableup.manager.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Setter
+@Getter
 @Entity
 public class Partnership {    // 파트너쉽 가입
 
